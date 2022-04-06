@@ -14,6 +14,9 @@ public class Menu extends JFrame {
 	private JTextArea compileText;
 	private JTextArea output;
 	private JLabel classIdentifier;
+	private JTextArea input;
+	private JButton load;
+	private JButton save;
 	private JLabel instructions;
 	private JPanel topPanel;
 	private JPanel interPanel;
@@ -29,6 +32,18 @@ public class Menu extends JFrame {
 	private void compile() {
 		String out = Main.init(compileText.getText(), classes.getText());
 		output.setText(out);
+	}
+
+	private void getNote() {
+		String s = Main.getNote(classes.getText());
+		instructions.setText(s);
+	}
+
+	private void setNote() {
+		String s = Main.setNote(input.getText(), classes.getText());
+		if (!s.equals("SUCCESS")) {
+			instructions.setText(s);
+		}
 	}
 
 	private void exit() {
@@ -79,10 +94,41 @@ public class Menu extends JFrame {
 		interPanel.add(classIdentifier);
 		interPanel.add(classes);
 
+		input = new JTextArea(2, 15);
+		input.setVisible(true);
+
 		instructions = new JLabel();
-		instructions.setText("Copy data directly from century tech and paste into the left box. Don't remove new lines. Remove any names other than first and last.");
+		instructions.setText("Note will be loaded here.");
 		instructions.setSize(400, 150);
 		instructions.setVisible(true);
+
+		load = new JButton();
+		load.setVisible(true);
+		load.setText("load");
+		load.setSize(100, 50);
+		load.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				getNote();
+			}
+		});
+
+		save = new JButton();
+		save.setVisible(true);
+		save.setText("save");
+		save.setSize(100, 50);
+		save.addActionListener(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				setNote();
+			}
+		});
+
+		topPanel.add(input);
+
+		topPanel.add(load);
+		topPanel.add(save);
+
 		topPanel.add(instructions);
 
 		compileText = new JTextArea(35, 25);
@@ -94,6 +140,7 @@ public class Menu extends JFrame {
 		compile = new JButton();
 		compile.setText("Calculate & Save");
 		compile.addActionListener(new ActionListener(){
+			@Override
 			public void actionPerformed (ActionEvent e){
 				compile();
 			}

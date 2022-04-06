@@ -4,6 +4,7 @@ import dev.mqxf.CT.GUI.Menu;
 import org.bspfsystems.yamlconfiguration.file.YamlConfiguration;
 
 import java.io.File;
+import java.io.IOException;
 
 public class Main {
 
@@ -190,6 +191,86 @@ public class Main {
             return hours + "h " + mins + "m";
         }
         return mins + "m " + secs + "s";
+    }
+
+    public static String getNote(String className) {
+        if (className.isBlank() || className.isEmpty()) {
+            return "Please enter a name for class";
+        }
+        if (className.contains(" ")) {
+            return "Class name cannot contain spaces";
+        }
+
+        String path = System.getProperty("user.home") + "/CTData/";
+        File dir = new File(path);
+        File file;
+        if (dir.exists() || dir.mkdirs()) {
+            file = new File(dir, className + ".yml");
+            if (!file.exists()) {
+                return "Invalid class";
+            }
+        }
+        else {
+            return "Error creating directory";
+        }
+
+        YamlConfiguration config = new YamlConfiguration();
+        try {
+            //config = YamlConfiguration.loadConfiguration(file);
+            config.load(file);
+        } catch (Exception e) {
+            return "Error loading config";
+        }
+
+        if (config.contains("note")) {
+            return config.getString("note");
+        }
+        else {
+            return "No note was set";
+        }
+    }
+
+    public static String setNote(String note, String className) {
+        if (className.isBlank() || className.isEmpty()) {
+            return "Please enter a name for class";
+        }
+        if (className.contains(" ")) {
+            return "Class name cannot contain spaces";
+        }
+
+        String path = System.getProperty("user.home") + "/CTData/";
+        File dir = new File(path);
+        File file;
+        if (dir.exists() || dir.mkdirs()) {
+            file = new File(dir, className + ".yml");
+            if (!file.exists()) {
+                try {
+                    file.createNewFile();
+                }
+                catch (Exception e) {
+                    return "Error creating file";
+                }
+            }
+        }
+        else {
+            return "Error creating directory";
+        }
+
+        YamlConfiguration config = new YamlConfiguration();
+        try {
+            //config = YamlConfiguration.loadConfiguration(file);
+            config.load(file);
+        } catch (Exception e) {
+            return "Error loading config";
+        }
+
+        config.set("note", note);
+        try {
+            config.save(file);
+        } catch (Exception e) {
+            return "Could not save file";
+        }
+        return "SUCCESS";
     }
 
     public static String substringBetween(final String str, final String open, final String close) {
